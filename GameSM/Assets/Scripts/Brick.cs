@@ -22,4 +22,8 @@ public class Brick : MonoBehaviour
                 Mathf.Lerp(transform.position.z, followedCube.position.z, followSpeed * Time.deltaTime));
         }
     }
+    public void RemoveCubePosition()
+    {
+        Destroy(this.gameObject);
+    }
 }

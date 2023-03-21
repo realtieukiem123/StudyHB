@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+
     public List<GameObject> listBrick = new List<GameObject>();
     public static GameController Instance { get; set; }
 
