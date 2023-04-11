@@ -22,6 +22,11 @@ public class Spawn : MonoBehaviour
                 Vector3 spawnPos = new Vector3(x * gridSpacing, 0, z * gridSpacing) + gridOrigin;
                 pickSpawn(spawnPos, Quaternion.identity);
             }
+            for (int z = 0; z < gridZ; z++)
+            {
+                Vector3 spawnPos = new Vector3(x * gridSpacing, 0, z * gridSpacing + 40f) + gridOrigin;
+                pickSpawn(spawnPos, Quaternion.identity);
+            }
         }
     }
     void pickSpawn(Vector3 posToSpawn, Quaternion rotationToSpawn)
@@ -32,4 +37,5 @@ public class Spawn : MonoBehaviour
         clone.gameObject.GetComponent<MeshRenderer>().material = ColorManager.instance.typeColor.newMat[rd];
         clone.GetComponent<Brick>().typeColorBrick = rd;
     }
+
 }

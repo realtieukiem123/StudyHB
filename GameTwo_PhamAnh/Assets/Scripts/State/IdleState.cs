@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class IdleState : State
@@ -12,7 +10,8 @@ public class IdleState : State
     {
 
         Vector3 n = new Vector3(0f, 0f, 40f);
-        EMove.navMeshAgent.Move(n * 0f);
+
+        EMove.navMeshAgent.velocity = Vector3.zero;
         //EMove.navMeshAgent.SetDestination(n);
     }
 

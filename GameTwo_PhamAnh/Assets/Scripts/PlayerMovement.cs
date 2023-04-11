@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _currentCubePos;
     private float additionHeight;
     public int _cubeListIndexCounter = 0;
-    
+
     private void Awake()
     {
         int rd = Random.Range(0, ColorManager.instance.typeColor.newMat.Length);
@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void check()
     {
-        if (Physics.Raycast(transform.position + moveDirection + Vector3.up * 1f, Vector3.down, Mathf.Infinity, layerPlayer))
+        if (Physics.Raycast(transform.position + moveDirection + Vector3.up * 0.5f, Vector3.down, Mathf.Infinity, layerPlayer))
         {
             isMove = true;
             //Debug.DrawRay(posFirst.position, Vector3.down, Color.red);
@@ -76,6 +76,30 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("BrickBridge"))
+        {
+            if (other.GetComponent<BrickBridge>().isAvtive == false)
+            {
+                var lBrick = GameController.Instance.listBrick;
+                if (lBrick.Count < 1) return;
+                other.GetComponent<MeshRenderer>().enabled = true;
+                other.GetComponent<MeshRenderer>().material = hairPlayer.material;
+                other.gameObject.layer = 11;
+                other.GetComponent<BrickBridge>().isAvtive = true;
+
+
+                var obj = GameController.Instance.listBrick[GameController.Instance.listBrick.Count - 1];
+                lBrick.RemoveAt(GameController.Instance.listBrick.Count - 1);
+                obj.gameObject.GetComponent<Brick>().IsFollowing = false;
+                StopCoroutine(obj.gameObject.GetComponent<Brick>().updateCube);
+                //obj.gameObject.GetComponent<Brick>().UpdateCubePosition(transform, false);
+                obj.gameObject.GetComponent<Brick>().returnPositionBrick();
+
+                _cubeListIndexCounter--;
+                additionHeight -= 0.1f;
+            }
+
+        }
 
         if (other.CompareTag("Brick") && other.GetComponent<Brick>().typeColorBrick == GameController.Instance.typeColorPlayer)
         {
@@ -83,6 +107,7 @@ public class PlayerMovement : MonoBehaviour
             lBrick.Add(other.gameObject);
             if (lBrick.Count == 1)
             {
+                _cubeListIndexCounter++;
                 firstBrick = other.gameObject;
                 var pos = GetComponent<MeshRenderer>().bounds.max;
                 pos.y += 1.9f;
@@ -91,13 +116,16 @@ public class PlayerMovement : MonoBehaviour
                 _currentCubePos = new Vector3(other.transform.position.x, _firstCubePos.y, other.transform.position.z);
                 other.gameObject.transform.position = _currentCubePos;
                 _currentCubePos = new Vector3(other.transform.position.x, transform.position.y + 0.3f, other.transform.position.z);
+                other.gameObject.GetComponent<Brick>().IsFollowing = true;
                 other.gameObject.GetComponent<Brick>().UpdateCubePosition(transform, true);
+
             }
             else if (lBrick.Count > 1)
             {
                 additionHeight += 0.1f;
                 other.gameObject.transform.position = new Vector3(firstBrick.transform.position.x, firstBrick.transform.position.y + additionHeight, firstBrick.transform.position.z);
-                other.gameObject.GetComponent<Brick>().UpdateCubePosition(lBrick[_cubeListIndexCounter].transform, true);
+                other.gameObject.GetComponent<Brick>().IsFollowing = true;
+                other.gameObject.GetComponent<Brick>().UpdateCubePosition(lBrick[_cubeListIndexCounter - 1].transform, true);
                 _cubeListIndexCounter++;
             }
         }
